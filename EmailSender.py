@@ -1,6 +1,6 @@
 import smtplib 
 from email.message import EmailMessage
-import random
+import csv
 from string import Template
 
 ID = 0
@@ -11,15 +11,11 @@ EMAIL = 4
 
 def get_contacts(filename, UserIds):
     Users = {}
-    with open(filename, mode='r', encoding='utf-8') as contacts_file:
-        for a_contact in contacts_file:
-            id = a_contact.split(',')[ID]
-            first = a_contact.split(',')[FIRST]
-            last = a_contact.split(',')[LAST]
-            gender = a_contact.split(',')[GENDER]
-            email = a_contact.split(',')[EMAIL]
-            Users[id] = [first, last, gender, email]
-            UserIds.append(id)
+    with open(filename, newline = '') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            Users[row['id']] = [row['first'], row['last'], row['gender'], row['email']]
+            UserIds.append(row['id'])
     return Users
 
 def read_template(filename):
@@ -28,7 +24,7 @@ def read_template(filename):
     return Template(template_file_content)
 
 UserIds = []    
-Users = get_contacts('C:Desktop\\PythonCode\\PythonEmail\\UserInfo.txt', UserIds)
+Users = get_contacts('C:Desktop\\PythonCode\\PythonEmail\\UserInfo.csv', UserIds)
 
 for i in range(len(UserIds)):
     id = UserIds[i]
@@ -51,6 +47,6 @@ for i in range(len(UserIds)):
     with smtplib.SMTP(host = 'smtp.gmail.com', port = 587) as smtp:
         smtp.ehlo()
         smtp.starttls() # encryption method 
-        smtp.login('adityamitra1089@gmail.com', '*******')
+        smtp.login('adityamitra1089@gmail.com', 'Dj4am69#')
         smtp.send_message(email)
         print('Yes')
