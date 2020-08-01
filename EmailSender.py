@@ -47,6 +47,6 @@ for i in range(len(UserIds)):
     with smtplib.SMTP(host = 'smtp.gmail.com', port = 587) as smtp:
         smtp.ehlo()
         smtp.starttls() # encryption method 
-        smtp.login('adityamitra1089@gmail.com', 'Dj4am69#')
+        smtp.login('adityamitra1089@gmail.com', '*******')
         smtp.send_message(email)
         print('Yes')
