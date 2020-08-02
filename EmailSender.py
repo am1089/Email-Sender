@@ -8,6 +8,9 @@ FIRST = 1
 LAST = 2
 GENDER = 3
 EMAIL = 4
+Sender = 'Rob Esper'
+SenderEmail = 'RobEsper0101@gmail.com'
+SenderPassword = '******'
 
 def get_contacts(filename, UserIds):
     Users = {}
@@ -24,7 +27,7 @@ def read_template(filename):
     return Template(template_file_content)
 
 UserIds = []    
-Users = get_contacts('C:Desktop\\PythonCode\\PythonEmail\\UserInfo.csv', UserIds)
+Users = get_contacts('UserInfo.csv', UserIds)
 
 for i in range(len(UserIds)):
     id = UserIds[i]
@@ -36,17 +39,17 @@ for i in range(len(UserIds)):
         gender = 'Miss'
 
     email = EmailMessage()
-    email['from'] = 'Aditya Mitra'
+    email['from'] = Sender
     email['to'] = Info[EMAIL-1]
     email['subject'] = 'Hi'
 
-    message_template = read_template('C:Desktop\\PythonCode\\PythonEmail\\TextFile.txt')
-    message = message_template.substitute(NAME = name.title(), GENDER = gender.title())
+    message_template = read_template('MessageTemplate.txt')
+    message = message_template.substitute(NAME = name.title(), GENDER = gender)
     email.set_content(message)
 
     with smtplib.SMTP(host = 'smtp.gmail.com', port = 587) as smtp:
         smtp.ehlo()
         smtp.starttls() # encryption method 
-        smtp.login('adityamitra1089@gmail.com', '*******')
+        smtp.login(SenderEmail, SenderPassword)
         smtp.send_message(email)
         print('Yes')
