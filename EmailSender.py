@@ -1,5 +1,8 @@
 import smtplib 
 from email.message import EmailMessage
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
 import csv
 from string import Template
 
@@ -8,16 +11,17 @@ FIRST = 1
 LAST = 2
 GENDER = 3
 EMAIL = 4
-Sender = 'Rob Esper'
-SenderEmail = 'RobEsper0101@gmail.com'
-SenderPassword = '******'
+IMAGE = 5
+Sender = 'Sender Name'
+SenderEmail = 'sender@gmail.com'
+SenderPassword = '*******'
 
 def get_contacts(filename, UserIds):
     Users = {}
     with open(filename, newline = '') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            Users[row['id']] = [row['first'], row['last'], row['gender'], row['email']]
+            Users[row['id']] = [row['first'], row['last'], row['gender'], row['email'], row['image']]
             UserIds.append(row['id'])
     return Users
 
@@ -33,19 +37,24 @@ for i in range(len(UserIds)):
     id = UserIds[i]
     Info = Users[id]
     name = Info[LAST-1]
+    imgfile = Info[IMAGE-1]
+    fp = open(imgfile, 'rb')
+    image = MIMEImage(fp.read())
+    fp.close()
     if Info[GENDER-1] == 'Male':
         gender = 'Mr.'
     else:
         gender = 'Miss'
 
-    email = EmailMessage()
+    email = MIMEMultipart()
     email['from'] = Sender
     email['to'] = Info[EMAIL-1]
     email['subject'] = 'Hi'
 
     message_template = read_template('MessageTemplate.txt')
-    message = message_template.substitute(NAME = name.title(), GENDER = gender)
-    email.set_content(message)
+    message = MIMEText(message_template.substitute(NAME = name.title(), GENDER = gender))
+    email.attach(message)
+    email.attach(image)
 
     with smtplib.SMTP(host = 'smtp.gmail.com', port = 587) as smtp:
         smtp.ehlo()
