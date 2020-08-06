@@ -22,6 +22,7 @@ with open('UserInfo.csv', newline = '') as csvfile:
         fp = open(imgfile, 'rb')
         image = MIMEImage(fp.read())
         fp.close()
+        image.add_header('Content-Disposition', "attachment; filename= %s" % row['image'])
         if row['gender'] == 'Male':
             gender = 'Mr.'
         else:
